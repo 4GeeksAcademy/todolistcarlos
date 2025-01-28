@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { Context } from "../store/appContext";
 
 
 const Home = () => {
 	const [inputValue, setInputValue] = useState("");
-	const [todos, setTodos] = useState([]);
+	const {store, actions} = useContext(Context);
 	return (
 		<div className="container">
 			<h1> TodosList </h1>
@@ -15,33 +16,27 @@ const Home = () => {
 						value={inputValue}
 						onKeyDown={(e) => {
 							if (e.key === "Enter") {
-								setTodos(todos.concat(inputValue));
+								actions.createTodo({label:inputValue});
 								setInputValue("");
-								c
 							}
 						}}
 						placeholder="Add a Task" ></input>
 				</li>
-				{todos.map((item, index) => (
-					<li class="line">
-						<p class="item-name">{item}{""}</p>
+				{store.listTodos.map((item, index) => (
+					<li className="line" key={item.id}>
+						<p className="item-name">{item.label}{""}</p>
 
 						<button
-							class="button"
+							className="button"
 							onClick={() =>
-								setTodos(
-									todos.filter(
-										(t, currentIndex) =>
-											index != currentIndex
-									)
-								)
+								actions.deleteTodo(item.id)
 
 							}
 						>Delete</button>
 					</li>
 				))}
 			</ul>
-			<div>{todos.length} task</div>
+			<div>{store.listTodos.length} task</div>
 		</div>
 	);
 };
